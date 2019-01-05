@@ -81,7 +81,7 @@ namespace NQV00Tool
             }
             catch (Exception ex)
             {
-                
+
 
             }
             base.WndProc(ref m);
@@ -134,7 +134,7 @@ namespace NQV00Tool
         /// </summary>
         /// <param name="combobox"></param>
         /// <param name="listbox"></param>
-        private void LoadDisk(ComboBox combobox,ListBox listbox)
+        private void LoadDisk(ComboBox combobox, ListBox listbox)
         {
             DriveInfo[] s = DriveInfo.GetDrives();
             combobox.Items.Clear();
@@ -187,7 +187,7 @@ namespace NQV00Tool
         /// <param name="oldname"></param>
         /// <param name="newname"></param>
         /// <param name="filefolder"></param>
-        private void AddItem2ListView(ListView listview, int fileindex,string filename,long filesize)
+        private void AddItem2ListView(ListView listview, int fileindex, string filename, long filesize)
         {
             //listview.Items.Clear();
             listview.BeginUpdate();//数据更新，UI暂时挂起，直到EndUpdate绘制控件，可以有效避免闪烁并大大提高加载速度 
@@ -215,8 +215,8 @@ namespace NQV00Tool
         private void comboDiskList_SelectedIndexChanged(object sender, EventArgs e)
         {
             string Disk = comboDiskList.Text.Trim();
-            string folder =txtFolder.Text.Trim();
-            string FileFolder = string.Empty ;
+            string folder = txtFolder.Text.Trim();
+            string FileFolder = string.Empty;
             lstviewFiles.Items.Clear();
 
             if (string.IsNullOrEmpty(Disk))
@@ -235,25 +235,25 @@ namespace NQV00Tool
             {
                 FileInfo[] fis = di.GetFiles();
                 int fileindex = 0;
-                foreach (FileInfo  fi in fis)
+                foreach (FileInfo fi in fis)
                 {
-                    fileindex ++;
+                    fileindex++;
                     AddItem2ListView(lstviewFiles, fileindex, fi.Name, fi.Length);
 
                 }
             }
-           
+
 
             //播放第一个视频
-            if (lstviewFiles.Items.Count >0)
+            if (lstviewFiles.Items.Count > 0)
             {
                 string file = FileFolder + @"\" + lstviewFiles.Items[0].SubItems[1].Text;
                 string vlc = @".\VLC\vlc.exe";
                 updateMessage(lstMsg, "播放" + file);
-                Thread t = new Thread(new ParameterizedThreadStart(PlayVideo ));
-                t.Start(vlc +" "+file);
+                Thread t = new Thread(new ParameterizedThreadStart(PlayVideo));
+                t.Start(vlc + " " + file);
 
-                
+
             }
 
 
@@ -261,7 +261,7 @@ namespace NQV00Tool
 
 
 
-        private void PlayVideo(object  file)
+        private void PlayVideo(object file)
         {
             Process pp = new Process();
             string strInput = file.ToString();
@@ -296,7 +296,7 @@ namespace NQV00Tool
             {
                 if (string.IsNullOrEmpty(lstviewFiles.SelectedItems[0].SubItems[1].Text))
                     return;
-                string file = comboDiskList.Text.Trim () +@"\" + txtFolder.Text.Trim () + @"\" + lstviewFiles.SelectedItems[0].SubItems[1].Text;
+                string file = comboDiskList.Text.Trim() + @"\" + txtFolder.Text.Trim() + @"\" + lstviewFiles.SelectedItems[0].SubItems[1].Text;
                 string vlc = @".\VLC\vlc.exe";
                 updateMessage(lstMsg, "播放" + file);
                 Thread t = new Thread(new ParameterizedThreadStart(PlayVideo));
@@ -304,5 +304,68 @@ namespace NQV00Tool
             }
         }
 
+
+
+        /// <summary>
+        /// 格式化设备
+        /// </summary>
+        /// <param name="logindevice"></param>
+        /// <param name="password"></param>
+        /// <param name="format"></param>
+        /// <returns></returns>
+        private bool FormatDisk(string disk, string format)
+        {
+            ProcessStartInfo processStartInfo = new ProcessStartInfo("cmd.exe");
+            processStartInfo.RedirectStandardInput = true;
+            processStartInfo.RedirectStandardOutput = true;
+            processStartInfo.UseShellExecute = false;
+            processStartInfo.CreateNoWindow = true;
+            Process process = Process.Start(processStartInfo);
+            if (process != null)
+            {
+                process.StandardInput.WriteLine(@"FORMAT " + disk + " /y /FS:" + format + " /Q");
+                process.StandardInput.Close();
+                string outputString = process.StandardOutput.ReadToEnd();
+
+                foreach (string  item in outputString.Split ('\r'))
+                {
+                    if (!string.IsNullOrEmpty (item .Trim ()))
+                       updateMessage(lstMsg, item.Trim());
+                }
+
+
+                if (outputString.Contains("已完成"))
+                    return true;
+                else
+                    return false;
+            }
+            return false;
+        }
+
+        private void btnFormatDisk_Click(object sender, EventArgs e)
+        {
+
+            string disk = comboDiskList.Text.Trim();
+
+            if (string.IsNullOrEmpty(disk))
+                return;
+            else
+            {
+                if (!Directory.Exists(disk))
+                {
+                    updateMessage(lstMsg, disk + "不存在,请重新确认.");
+                    return;
+                }
+            }
+
+            if (disk.EndsWith(@"\"))
+                disk = disk.Replace(@"\", "");
+
+            if (FormatDisk(disk, comboDiskFormat.Text))
+                updateMessage(lstMsg, "格式化" + comboDiskList.Text + "为" + comboDiskFormat.Text + "成功.");
+            else
+                updateMessage(lstMsg, "格式化" + comboDiskList.Text + "为" + comboDiskFormat.Text + "失败.");
+            
+        }
     }
 }

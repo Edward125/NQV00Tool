@@ -107,6 +107,7 @@
             // lstMsg
             // 
             this.lstMsg.FormattingEnabled = true;
+            this.lstMsg.HorizontalScrollbar = true;
             this.lstMsg.ItemHeight = 12;
             this.lstMsg.Location = new System.Drawing.Point(12, 20);
             this.lstMsg.Name = "lstMsg";
@@ -184,6 +185,7 @@
             this.btnFormatDisk.TabIndex = 2;
             this.btnFormatDisk.Text = "格式化";
             this.btnFormatDisk.UseVisualStyleBackColor = true;
+            this.btnFormatDisk.Click += new System.EventHandler(this.btnFormatDisk_Click);
             // 
             // btnClearMsg
             // 
