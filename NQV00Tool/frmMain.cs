@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace NQV00Tool
@@ -112,8 +114,15 @@ namespace NQV00Tool
         /// <param name="listview"></param>
         private void InitListview(ListView listview)
         {
+            listview.Clear();
             listview.View = View.Details;
-
+            listview.MultiSelect = false;
+            listview.AutoArrange = true;
+            listview.GridLines = true;
+            listview.FullRowSelect = true;
+            listview.Columns.Add("序号", 40, HorizontalAlignment.Center);
+            listview.Columns.Add("文件名", 350, HorizontalAlignment.Center);
+            listview.Columns.Add("大小", 90, HorizontalAlignment.Center);
         }
 
 
@@ -128,7 +137,7 @@ namespace NQV00Tool
         private void LoadDisk(ComboBox combobox,ListBox listbox)
         {
             DriveInfo[] s = DriveInfo.GetDrives();
-           combobox.Items.Clear();
+            combobox.Items.Clear();
             foreach (DriveInfo drive in s)
             {
                 if (drive.DriveType == DriveType.Removable)
@@ -167,6 +176,32 @@ namespace NQV00Tool
         }
         #endregion
 
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="listview"></param>
+        /// <param name="filescount"></param>
+        /// <param name="fileextension"></param>
+        /// <param name="oldname"></param>
+        /// <param name="newname"></param>
+        /// <param name="filefolder"></param>
+        private void AddItem2ListView(ListView listview, int fileindex,string filename,long filesize)
+        {
+            //listview.Items.Clear();
+            listview.BeginUpdate();//数据更新，UI暂时挂起，直到EndUpdate绘制控件，可以有效避免闪烁并大大提高加载速度 
+            ListViewItem lt = new ListViewItem();
+            lt = listview.Items.Add(fileindex.ToString());
+            lt.SubItems.Add(filename);
+            lt.SubItems.Add(filesize.ToString());
+            listview.EndUpdate();//结束数据处理，UI界面一次性绘制。
+
+
+        }
+
+
+
         private void button3_Click(object sender, EventArgs e)
         {
             LoadDisk(comboDiskList, lstMsg);
@@ -175,6 +210,98 @@ namespace NQV00Tool
         private void btnClearMsg_Click(object sender, EventArgs e)
         {
             lstMsg.Items.Clear();
+        }
+
+        private void comboDiskList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string Disk = comboDiskList.Text.Trim();
+            string folder =txtFolder.Text.Trim();
+            string FileFolder = string.Empty ;
+            lstviewFiles.Items.Clear();
+
+            if (string.IsNullOrEmpty(Disk))
+                return;
+            if (!Disk.EndsWith(@"\"))
+                Disk = Disk + @"\";
+            FileFolder = Disk + folder;
+
+            DirectoryInfo di = new DirectoryInfo(FileFolder);
+            if (!di.Exists)
+            {
+                updateMessage(lstMsg, FileFolder + "不存在,请重新确认.");
+                return;
+            }
+            else
+            {
+                FileInfo[] fis = di.GetFiles();
+                int fileindex = 0;
+                foreach (FileInfo  fi in fis)
+                {
+                    fileindex ++;
+                    AddItem2ListView(lstviewFiles, fileindex, fi.Name, fi.Length);
+
+                }
+            }
+           
+
+            //播放第一个视频
+            if (lstviewFiles.Items.Count >0)
+            {
+                string file = FileFolder + @"\" + lstviewFiles.Items[0].SubItems[1].Text;
+                string vlc = @".\VLC\vlc.exe";
+                updateMessage(lstMsg, "播放" + file);
+                Thread t = new Thread(new ParameterizedThreadStart(PlayVideo ));
+                t.Start(vlc +" "+file);
+
+                
+            }
+
+
+        }
+
+
+
+        private void PlayVideo(object  file)
+        {
+            Process pp = new Process();
+            string strInput = file.ToString();
+            //设置要启动的应用程序
+            pp.StartInfo.FileName = "cmd.exe";
+            //是否使用操作系统shell启动
+            pp.StartInfo.UseShellExecute = false;
+            // 接受来自调用程序的输入信息
+            pp.StartInfo.RedirectStandardInput = true;
+            //输出信息
+            pp.StartInfo.RedirectStandardOutput = true;
+            // 输出错误
+            pp.StartInfo.RedirectStandardError = true;
+            //不显示程序窗口
+            //p.StartInfo.CreateNoWindow = true;
+            pp.StartInfo.CreateNoWindow = true;
+            //启动程序
+            pp.Start();
+            //向cmd窗口发送输入信息
+            pp.StandardInput.WriteLine(strInput);
+            pp.StandardInput.AutoFlush = true;
+            ////获取输出信息
+            //string strOuput = pp.StandardOutput.ReadToEnd();
+            //等待程序执行完退出进程
+            pp.WaitForExit();
+            pp.Close();
+        }
+
+        private void lstviewFiles_DoubleClick(object sender, EventArgs e)
+        {
+            if (lstviewFiles.Items.Count > 0)
+            {
+                if (string.IsNullOrEmpty(lstviewFiles.SelectedItems[0].SubItems[1].Text))
+                    return;
+                string file = comboDiskList.Text.Trim () +@"\" + txtFolder.Text.Trim () + @"\" + lstviewFiles.SelectedItems[0].SubItems[1].Text;
+                string vlc = @".\VLC\vlc.exe";
+                updateMessage(lstMsg, "播放" + file);
+                Thread t = new Thread(new ParameterizedThreadStart(PlayVideo));
+                t.Start(vlc + " " + file);
+            }
         }
 
     }

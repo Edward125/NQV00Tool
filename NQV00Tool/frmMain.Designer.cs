@@ -42,7 +42,7 @@
             this.button2 = new System.Windows.Forms.Button();
             this.btnFormatDisk = new System.Windows.Forms.Button();
             this.btnClearMsg = new System.Windows.Forms.Button();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.txtFolder = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox4.SuspendLayout();
@@ -53,7 +53,7 @@
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.label3);
-            this.groupBox1.Controls.Add(this.textBox1);
+            this.groupBox1.Controls.Add(this.txtFolder);
             this.groupBox1.Controls.Add(this.btnManual);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.comboDiskList);
@@ -62,7 +62,7 @@
             this.groupBox1.Controls.Add(this.groupBox2);
             this.groupBox1.Location = new System.Drawing.Point(24, 36);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(701, 356);
+            this.groupBox1.Size = new System.Drawing.Size(701, 369);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             // 
@@ -92,13 +92,14 @@
             this.comboDiskList.Name = "comboDiskList";
             this.comboDiskList.Size = new System.Drawing.Size(82, 20);
             this.comboDiskList.TabIndex = 1;
+            this.comboDiskList.SelectedIndexChanged += new System.EventHandler(this.comboDiskList_SelectedIndexChanged);
             // 
             // groupBox4
             // 
             this.groupBox4.Controls.Add(this.lstMsg);
-            this.groupBox4.Location = new System.Drawing.Point(190, 150);
+            this.groupBox4.Location = new System.Drawing.Point(192, 175);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(487, 202);
+            this.groupBox4.Size = new System.Drawing.Size(487, 181);
             this.groupBox4.TabIndex = 4;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "信息列表";
@@ -109,26 +110,27 @@
             this.lstMsg.ItemHeight = 12;
             this.lstMsg.Location = new System.Drawing.Point(12, 20);
             this.lstMsg.Name = "lstMsg";
-            this.lstMsg.Size = new System.Drawing.Size(661, 172);
+            this.lstMsg.Size = new System.Drawing.Size(469, 148);
             this.lstMsg.TabIndex = 2;
             // 
             // groupBox3
             // 
             this.groupBox3.Controls.Add(this.lstviewFiles);
-            this.groupBox3.Location = new System.Drawing.Point(190, 20);
+            this.groupBox3.Location = new System.Drawing.Point(190, 17);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(498, 124);
+            this.groupBox3.Size = new System.Drawing.Size(498, 151);
             this.groupBox3.TabIndex = 3;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "文件列表";
             // 
             // lstviewFiles
             // 
-            this.lstviewFiles.Location = new System.Drawing.Point(11, 20);
+            this.lstviewFiles.Location = new System.Drawing.Point(11, 17);
             this.lstviewFiles.Name = "lstviewFiles";
-            this.lstviewFiles.Size = new System.Drawing.Size(478, 95);
+            this.lstviewFiles.Size = new System.Drawing.Size(478, 125);
             this.lstviewFiles.TabIndex = 0;
             this.lstviewFiles.UseCompatibleStateImageBehavior = false;
+            this.lstviewFiles.DoubleClick += new System.EventHandler(this.lstviewFiles_DoubleClick);
             // 
             // groupBox2
             // 
@@ -139,7 +141,7 @@
             this.groupBox2.Controls.Add(this.btnFormatDisk);
             this.groupBox2.Location = new System.Drawing.Point(6, 154);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(179, 193);
+            this.groupBox2.Size = new System.Drawing.Size(179, 198);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "功能列表";
@@ -193,13 +195,13 @@
             this.btnClearMsg.UseVisualStyleBackColor = true;
             this.btnClearMsg.Click += new System.EventHandler(this.btnClearMsg_Click);
             // 
-            // textBox1
+            // txtFolder
             // 
-            this.textBox1.Location = new System.Drawing.Point(22, 76);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(162, 21);
-            this.textBox1.TabIndex = 7;
-            this.textBox1.Text = "DCIM\\100MEDIA";
+            this.txtFolder.Location = new System.Drawing.Point(22, 76);
+            this.txtFolder.Name = "txtFolder";
+            this.txtFolder.Size = new System.Drawing.Size(162, 21);
+            this.txtFolder.TabIndex = 7;
+            this.txtFolder.Text = "DCIM\\100MEDIA";
             // 
             // label3
             // 
@@ -246,7 +248,7 @@
         private System.Windows.Forms.Button btnManual;
         private System.Windows.Forms.Button btnClearMsg;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox txtFolder;
 
     }
 }
