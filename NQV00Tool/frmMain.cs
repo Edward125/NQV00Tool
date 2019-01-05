@@ -98,11 +98,14 @@ namespace NQV00Tool
         }
 
 
+
+
         /// <summary>
         /// 
         /// </summary>
         private void Init()
         {
+            this.Text = "NQV002生产工具,Ver:" + Application.ProductVersion;
             comboDiskFormat.SelectedIndex = 0;
             InitListview(lstviewFiles);
 
@@ -367,5 +370,52 @@ namespace NQV00Tool
                 updateMessage(lstMsg, "格式化" + comboDiskList.Text + "为" + comboDiskFormat.Text + "失败.");
             
         }
+
+
+
+
+
+
+       private  void writetime(string Folder)
+        {
+            StreamWriter sw = new StreamWriter(Folder + @"DATE.txt", false);
+            sw.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+            sw.Close();
+            updateMessage(lstMsg, "已生成同步时间的文件DATE.txt,时间为:" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+        }
+
+       private void btnSyncTime_Click(object sender, EventArgs e)
+       {
+           string disk = comboDiskList.Text.Trim();
+           if (string.IsNullOrEmpty(disk))
+               return;
+           else
+           {
+               if (!Directory.Exists(disk))
+               {
+                   updateMessage(lstMsg, disk + "不存在,请重新确认.");
+                   return;
+               }
+           }
+
+           writetime(disk);
+           System.Diagnostics.Process.Start(disk);
+       }
+
+       private void panel1_Paint(object sender, PaintEventArgs e)
+       {
+           Graphics g = e.Graphics; //创建画板,这里的画板是由Form提供的. 
+
+           // g.Clear(this.BackColor);
+
+           //ate
+           Color color = Color.White;
+           Pen p = new Pen(color, 25);//定义了一个蓝色,宽度为的画笔        
+           System.Drawing.Font font = new System.Drawing.Font("Agency FB", 50F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+           SolidBrush brush = new SolidBrush(color);
+           g.DrawString("NQV002生产工具", font, brush, 150F, 100F);
+       }
+
+     
     }
 }
