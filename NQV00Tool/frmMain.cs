@@ -97,6 +97,22 @@ namespace NQV00Tool
             Init();
         }
 
+        //protected override void OnPaintBackground(PaintEventArgs e)
+        //{
+        //    int y, dy;                                  //定义两个int型的变量y、dy
+        //    y = this.ClientRectangle.Location.Y;            //为变量y赋值
+        //    dy = this.ClientRectangle.Height / 256;  //为变量dy赋值
+        //    for (int i = 255; i >= 0; i--)
+        //    {
+        //        Color c = new Color();               //定义一个Color类型的实例c             //为实例c赋值
+        //        c = Color.FromArgb(1, i, 255);//通过设置红绿蓝的值变化
+        //        SolidBrush sb = new SolidBrush(c);     //实例化一个单色画笔类对象sb
+        //        Pen p = new Pen(sb, 1);              //实例化一个用于绘制直线和曲线的对象p
+        //        e.Graphics.DrawRectangle(p, this.ClientRectangle.X, y, this.Width, y + dy);        //绘制图形
+        //        y = y + dy;                          //重新为变量y赋值
+        //    }
+
+        //}
 
 
 
@@ -406,14 +422,14 @@ namespace NQV00Tool
        {
            Graphics g = e.Graphics; //创建画板,这里的画板是由Form提供的. 
 
-           // g.Clear(this.BackColor);
+          //  g.Clear(this.BackColor);
 
            //ate
            Color color = Color.White;
            Pen p = new Pen(color, 25);//定义了一个蓝色,宽度为的画笔        
-           System.Drawing.Font font = new System.Drawing.Font("Agency FB", 50F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+           System.Drawing.Font font = new System.Drawing.Font("Agency FB", 40F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
            SolidBrush brush = new SolidBrush(color);
-           g.DrawString("NQV002生产工具", font, brush, 150F, 100F);
+           g.DrawString("NQV002生产工具", font, brush, 180F, 14F);
        }
 
      
