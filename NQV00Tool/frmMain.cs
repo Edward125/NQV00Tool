@@ -47,24 +47,7 @@ namespace NQV00Tool
                         case WM_DEVICECHANGE:
                             break;
                         case DBT_DEVICEARRIVAL://U盘插入
-                            DriveInfo[] s = DriveInfo.GetDrives();
-                            comboDiskList.Items.Clear();
-                            foreach (DriveInfo drive in s)
-                            {
-                                if (drive.DriveType == DriveType.Removable)
-                                {
-                                    // updateMessage(lb_StateInfo, "U盘已插入，盘符为:" + drive.Name.ToString());
-                                    //this.btn_EcjetSD.Enabled = true;
-                                    //this.btn_UpdataFile.Enabled = true;
-                                    ////Thread.Sleep(1000);
-                                    //DestinFolder = drive.Name.ToString();
-                                    comboDiskList.Items.Add(drive.Name);
-                                    break;
-                                }
-                            }
-                            if (comboDiskList.Items.Count > 0)
-                                comboDiskList.SelectedIndex = 0;
-         
+                            LoadDisk(comboDiskList, lstMsg);
                             break;
                         case DBT_CONFIGCHANGECANCELED:
                             break;
@@ -77,10 +60,7 @@ namespace NQV00Tool
                         case DBT_DEVICEQUERYREMOVEFAILED:
                             break;
                         case DBT_DEVICEREMOVECOMPLETE: //U盘卸载
-                            //if (bCheckDevice)
-                            //{
-                            //    updateMessage(lb_StateInfo, "U盘已卸载！");
-                            //}
+                            LoadDisk(comboDiskList, lstMsg);
                             break;
                         case DBT_DEVICEREMOVEPENDING:
                             break;
@@ -134,9 +114,68 @@ namespace NQV00Tool
         {
             listview.View = View.Details;
 
+        }
+
+
+
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="combobox"></param>
+        /// <param name="listbox"></param>
+        private void LoadDisk(ComboBox combobox,ListBox listbox)
+        {
+            DriveInfo[] s = DriveInfo.GetDrives();
+           combobox.Items.Clear();
+            foreach (DriveInfo drive in s)
+            {
+                if (drive.DriveType == DriveType.Removable)
+                {
+                    updateMessage(listbox, "侦测到可移动磁盘,盘符:" + drive.Name);
+                    combobox.Items.Add(drive.Name);
+                }
+            }
+            if (combobox.Items.Count > 0)
+                combobox.SelectedIndex = 0;
 
         }
 
+
+
+        #region 更新信息
+        /// <summary>
+        /// 更新信息到listbox中
+        /// </summary>
+        /// <param name="listbox">listbox name</param>
+        /// <param name="message">message</param>
+        public static void updateMessage(ListBox listbox, string message)
+        {
+            if (listbox.Items.Count > 100)
+                listbox.Items.RemoveAt(0);
+
+            string item = string.Empty;
+            //listbox.Items.Add("");
+            item = DateTime.Now.ToString("HH:mm:ss") + " " + @message;
+            listbox.Items.Add(item);
+            if (listbox.Items.Count > 1)
+            {
+                listbox.TopIndex = listbox.Items.Count - 1;
+                listbox.SetSelected(listbox.Items.Count - 1, true);
+            }
+        }
+        #endregion
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            LoadDisk(comboDiskList, lstMsg);
+        }
+
+        private void btnClearMsg_Click(object sender, EventArgs e)
+        {
+            lstMsg.Items.Clear();
+        }
 
     }
 }
